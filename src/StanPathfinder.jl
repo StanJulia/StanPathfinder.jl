@@ -2,7 +2,7 @@
 
 $(SIGNATURES)
 
-Helper infrastructure to compile and sample models using `cmdstan`.
+Helper infrastructure to compile and run the pathfinder  method using `cmdstan`.
 """
 module StanPathfinder
 
