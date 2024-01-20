@@ -1,3 +1,3 @@
-# StanVariational
+# StanPathfinder
 
 *Documentation goes here.*

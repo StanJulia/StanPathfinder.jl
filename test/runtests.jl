@@ -1,4 +1,4 @@
-using StanVariational
+using StanPathfinder
 using Statistics, Test
 
 if haskey(ENV, "JULIA_CMDSTAN_HOME") || haskey(ENV, "CMDSTAN")
@@ -19,15 +19,15 @@ if haskey(ENV, "JULIA_CMDSTAN_HOME") || haskey(ENV, "CMDSTAN")
 
   bernoulli_data = Dict("N" => 10, "y" => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1])
 
-  stanmodel = VariationalModel("bernoulli", bernoulli_model)
+  stanmodel = PathfinderModel("bernoulli", bernoulli_model)
 
-  rc = stan_variational(stanmodel; data=bernoulli_data)
+  rc = stan_pathfinder(stanmodel; data=bernoulli_data)
 
   if success(rc)
 
-    @testset "Bernoulli variational example" begin
+    @testset "Bernoulli pathfinder example" begin
       # Read sample summary (in ChainDataFrame format)
-      samples, cnames = read_variational(stanmodel)
+      samples, cnames = read_pathfinder(stanmodel)
       ms = mean(samples; dims=1)
       #ms |> display
       #ms[1, 2, 1] |> display

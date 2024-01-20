@@ -1,6 +1,6 @@
 import Base: show
 
-mutable struct VariationalModel <: CmdStanModels
+mutable struct PathfinderModel <: CmdStanModels
     name::AbstractString;              # Name of the Stan program
     model::AbstractString;             # Stan language model program
 
@@ -41,9 +41,9 @@ mutable struct VariationalModel <: CmdStanModels
 end
 
 """
-# VariationalModel 
+# PathfinderModel 
 
-Create a VariationalModel and compile the Stan Language Model.. 
+Create a PathfinderModel and compile the Stan Language Model.. 
 
 ### Required arguments
 ```julia
@@ -57,7 +57,7 @@ Create a VariationalModel and compile the Stan Language Model..
 ```
 
 """
-function VariationalModel(
+function PathfinderModel(
     name::AbstractString,
     model::AbstractString,
     tmpdir = CMDSTAN_HOME)
@@ -80,13 +80,13 @@ function VariationalModel(
         throw(StanModelError(model, String(take!(error_output))))
     end
 
-    VariationalModel(name, model, 
+    PathfinderModel(name, model, 
         # num_chains, num_threads
         4, 4, 
         # seed, refresh, init_bound
         -1, 100, 2,
 
-        # Variational settings
+        # Pathfinder settings
         :meanfield,                    # algorithm
         10000,                         # iter (ADVI)
         1,                             # grad_samples
@@ -113,8 +113,8 @@ function VariationalModel(
         cmdstan_home)
 end
 
-function Base.show(io::IO, ::MIME"text/plain", m::VariationalModel)
-    println(io, "\nVariational section:")
+function Base.show(io::IO, ::MIME"text/plain", m::PathfinderModel)
+    println(io, "\nPathfinder section:")
     println(io, "  name =                    ", m.name)
     println(io, "  num_chains =              ", m.num_chains)
     println(io, "  num_threads =             ", m.num_threads)

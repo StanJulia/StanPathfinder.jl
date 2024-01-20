@@ -1,6 +1,6 @@
-######### StanVariational Bernoulli example  ###########
+######### StanPathfinder Bernoulli example  ###########
 
-using StanVariational
+using StanPathfinder
 
 bernoulli_model = "
 data { 
@@ -21,11 +21,11 @@ data = Dict("N" => 10, "y" => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1])
 # Keep tmpdir across multiple runs to prevent re-compilation
 tmpdir = joinpath(@__DIR__, "tmp")
 
-sm = VariationalModel("bernoulli", bernoulli_model, tmpdir)
-rc = stan_variational(sm; data, test=5)
+sm = PathfinderModel("bernoulli", bernoulli_model, tmpdir)
+rc = stan_pathfinder(sm; data)
 
 if success(rc)
 
-  (samples, names) = read_variational(sm)
+  (samples, names) = read_pathfinder(sm)
 
 end

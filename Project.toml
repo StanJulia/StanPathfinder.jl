@@ -1,4 +1,4 @@
-name = "StanVariational"
+name = "StanPathfinder"
 uuid = "6ede68ce-8466-5085-8a79-4c4de3d9cf4a"
 authors = ["Rob J Goedman <goedman@mac.com>"]
 version = "4.5.0"

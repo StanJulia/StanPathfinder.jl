@@ -1,12 +1,12 @@
 """
 
-stan_variational()
+stan_pathfinder()
 
-Sample from a StanJulia VariationalModel (<: CmdStanModel.)
+Sample from a StanJulia PathfinderModel (<: CmdStanModel.)
 
 ## Required argument
 ```julia
-* `m::VariationalModel`                # VariationalModel.
+* `m::PathfinderModel`                # PathfinderModel.
 * `use_json=true`                      # Use JSON3 for data and init files
 ```
 

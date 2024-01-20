@@ -4,7 +4,7 @@ $(SIGNATURES)
 
 Helper infrastructure to compile and sample models using `cmdstan`.
 """
-module StanVariational
+module StanPathfinder
 
 using Reexport
 
@@ -23,18 +23,18 @@ import StanBase: data_file_path, init_file_path, sample_file_path
 import StanBase: generated_quantities_file_path, log_file_path
 import StanBase: diagnostic_file_path, setup_diagnostics
 
-include("stanmodel/VariationalModel.jl")
+include("stanmodel/PathfinderModel.jl")
 
 include("stanrun/stan_run.jl")
 include("stanrun/cmdline.jl")
 
-include("stansamples/read_variational.jl")
+include("stansamples/read_pathfinder.jl")
 
-stan_variational = stan_run
+stan_pathfinder = stan_run
 
 export
-  VariationalModel,
-  stan_variational,
-  read_variational
+  PathfinderModel,
+  stan_pathfinder,
+  read_pathfinder
 
 end # module

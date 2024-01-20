@@ -11,19 +11,19 @@ cmdline(m)
 
 ### Required arguments
 ```julia
-* `m::VariationalModel`                : VariationalModel
+* `m::PathfinderModel`                : PathfinderModel
 ```
 
 """
-function cmdline(m::VariationalModel, id)
+function cmdline(m::PathfinderModel, id)
   
     #=
-    `/Users/rob/.julia/dev/StanVariational/examples/Bernoulli/tmp/bernoulli 
-    variational algorithm=meanfield grad_samples=1 elbo_samples=100 
+    `/Users/rob/.julia/dev/StanPathfinder/examples/Bernoulli/tmp/bernoulli 
+    pathfinder algorithm=meanfield grad_samples=1 elbo_samples=100 
     iter=10000 tol_rel_obj=0.01 eval_elbo=100 output_samples=10000 
     random seed=-1 init=2 id=1 
-    data file=/Users/rob/.julia/dev/StanVariational/examples/Bernoulli/tmp/bernoulli_data_1.R 
-    output file=/Users/rob/.julia/dev/StanVariational/examples/Bernoulli/tmp/bernoulli_chain_1.csv 
+    data file=/Users/rob/.julia/dev/StanPathfinder/examples/Bernoulli/tmp/bernoulli_data_1.R 
+    output file=/Users/rob/.julia/dev/StanPathfinder/examples/Bernoulli/tmp/bernoulli_chain_1.csv 
     refresh=100`
     =#
 
@@ -31,8 +31,8 @@ function cmdline(m::VariationalModel, id)
     # Handle the model name field for unix and windows
     cmd = `$(m.exec_path)`
 
-    # Variational() specific portion of the model
-    cmd = `$cmd variational algorithm=$(string(m.algorithm))`
+    # Pathfinder() specific portion of the model
+    cmd = `$cmd pathfinder algorithm=$(string(m.algorithm))`
 
     cmd = `$cmd iter=$(m.iter)`
     cmd = `$cmd grad_samples=$(m.grad_samples) elbo_samples=$(m.elbo_samples)`

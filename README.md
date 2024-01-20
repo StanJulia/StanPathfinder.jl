@@ -1,18 +1,18 @@
-# StanVariational.jl
+# StanPathfinder.jl
 
 | **Project Status**          |  **Build Status** |
 |:---------------------------:|:-----------------:|
 |![][project-status-img] | ![][CI-build] |
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
-[docs-dev-url]: https://stanjulia.github.io/StanVariational.jl/latest
+[docs-dev-url]: https://stanjulia.github.io/StanPathfinder.jl/latest
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
-[docs-stable-url]: https://stanjulia.github.io/StanVariational.jl/stable
+[docs-stable-url]: https://stanjulia.github.io/StanPathfinder.jl/stable
 
-[CI-build]: https://github.com/stanjulia/StanVariational.jl/workflows/CI/badge.svg?branch=master
+[CI-build]: https://github.com/stanjulia/StanPathfinder.jl/workflows/CI/badge.svg?branch=master
 
-[issues-url]: https://github.com/stanjulia/StanVariational.jl/issues
+[issues-url]: https://github.com/stanjulia/StanPathfinder.jl/issues
 
 [project-status-img]: https://img.shields.io/badge/lifecycle-stable-green.svg
 
@@ -22,19 +22,17 @@
 
 ## Installation
 
-This package is registered. Install with
+Once this package is registered, you can install it with
 
 ```julia
-pkg> add StanVariational.jl
+pkg> add StanPathfinder.jl
 ```
 
 You need a working [cmdstan](https://mc-stan.org/users/interfaces/cmdstan.html) installation, the path of which you should specify either in `CMDSTAN` or `JULIA_CMDSTAN_HOME`, eg in your `~/.julia/config/startup.jl` have a line like
 ```julia
 # CmdStan setup
-ENV["CMDSTAN"] = expanduser("~/src/cmdstan-2.19.1/") # replace with your path
+ENV["CMDSTAN"] = expanduser("~/src/cmdstan-2.34.0/") # replace with your path
 ```
-
-This package is derived from Tamas Papp's [StanRun.jl](https://github.com/tpapp/StanRun.jl) package. It also uses StanDump.jl and StanSamples.jl. 
 
 ## Usage
 
@@ -49,7 +47,7 @@ Otherwise, `stan_sample` will use a single process.
 Use this package like this:
 
 ```julia
-using StanVariational
+using StanPathfinder
 ```
 
-See the docstrings (in particular `?StanVariational`) for more.
+See the docstrings (in particular `?StanPathfinder`) for more.

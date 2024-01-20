@@ -1,21 +1,21 @@
 """
 
-# read_variational
+# read_pathfinder
 
-Read variational sample output files created by cmdstan. 
+Read pathfinder sample output files created by cmdstan. 
 
 ### Method
 ```julia
-read_variational(m::VariationalModelodel)
+read_pathfinder(m::PathfinderModelodel)
 ```
 
 ### Required arguments
 ```julia
-* `m::VariationalModel`    : VariationalModel object
+* `m::PathfinderModel`    : PathfinderModel object
 ```
 
 """
-function read_variational(m::VariationalModel)
+function read_pathfinder(m::PathfinderModel)
 
   local a3d, index, idx, indvec
   

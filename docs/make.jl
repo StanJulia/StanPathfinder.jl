@@ -1,13 +1,13 @@
-using Documenter, StanVariational
+using Documenter, StanPathfinder
 
 makedocs(
-    modules = [StanVariational],
+    modules = [StanPathfinder],
     format = Documenter.HTML(),
     checkdocs = :exports,
-    sitename = "StanVariational.jl",
+    sitename = "StanPathfinder.jl",
     pages = Any["index.md"]
 )
 
 deploydocs(
-    repo = "github.com/goedman/StanVariational.jl.git",
+    repo = "github.com/StanJulia/StanVPathfinder.jl.git",
 )
