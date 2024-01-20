@@ -2,7 +2,7 @@
 
 $(SIGNATURES)
 
-Helper infrastructure to compile and run the pathfinder  method using `cmdstan`.
+Helper infrastructure to compile and run the pathfinder method using `cmdstan`.
 """
 module StanPathfinder
 
@@ -22,6 +22,7 @@ import StanBase: update_json_files
 import StanBase: data_file_path, init_file_path, sample_file_path
 import StanBase: generated_quantities_file_path, log_file_path
 import StanBase: diagnostic_file_path, setup_diagnostics
+import StanBase: profile_file_path, setup_profiles
 
 include("stanmodel/PathfinderModel.jl")
 

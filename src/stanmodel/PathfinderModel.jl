@@ -6,27 +6,27 @@ mutable struct PathfinderModel <: CmdStanModels
 
     # Sample fields
     num_chains::Int64;                 # Number of chains
-    num_threads::Int64;                # Number of threads
+    init_alpha::Float64;               #
+    tol_obj::Float64;                  #
+    tol_rel_obj::Float64;              #
+    tol_grad::Float64;                 #
+    tol_rel_grad::Float64;             #
+    tol_param::Float64;                #
+    history_size::Int;
+    num_psis_draws::Int;
+    num_paths::Int;
+    psis_resample::Bool;
+    calculate_lp::Bool;
+    save_single_paths::Bool;
+    max_lbfgs_iters::Int;
+    num_draws::Int;
+    num_elbo_draws::Int;
 
-    seed::Int;                         # Seed section of cmd to run cmdstan
-    refresh::Int;                      # Display progress in output files
-    init_bound::Int;                   # Bound for initial param values
-
-    # Algorithm fields
-    algorithm::Symbol;                 # :meanfield or :fullrank
-
-    iter::Int;                         # Maximum no of ADVI iterations
-    grad_samples::Int;                 # Number of draws to compute gradient
-    elbo_samples::Int;                 # Number of draws for ELBO estimate
-    eta::Float64;                      # Stepsize scaling parameter
-
-    # Adapt fields
-    engaged::Bool;                     # Eta adaptation active
-    adapt_iter::Int;                   # No of iterations for eta adaptation
-
-    tol_rel_obj::Float64;              # Tolerance for convergence
-    eval_elbo::Int;                    # No of iterations between ELBO evaluations
-    output_samples::Int;               # Approximate no of posterior draws to save
+    init::Int;
+    seed::Int;
+    refresh::Int;
+    sig_figs::Int;
+    num_threads::Int;
 
     output_base::AbstractString;       # Used for file paths to be created
     tmpdir::AbstractString;            # Holds all created files
@@ -34,9 +34,10 @@ mutable struct PathfinderModel <: CmdStanModels
     data_file::Vector{AbstractString}; # Array of data files input to cmdstan
     init_file::Vector{AbstractString}; # Array of init files input to cmdstan
     cmds::Vector{Cmd};                 # Array of cmds to be spawned/pipelined
-    sample_file::Vector{String};       # Sample file array (.csv)
+    file::Vector{String};              # Sample file array (.csv)
     log_file::Vector{String};          # Log file array
     diagnostic_file::Vector{String};   # Diagnostic file array
+    profile_file::Vector{String};      # Profile file array (.csv)
     cmdstan_home::AbstractString;      # Directory where cmdstan can be found
 end
 
@@ -60,7 +61,7 @@ Create a PathfinderModel and compile the Stan Language Model..
 function PathfinderModel(
     name::AbstractString,
     model::AbstractString,
-    tmpdir = CMDSTAN_HOME)
+    tmpdir = mktempdir())
 
     !isdir(tmpdir) && mkdir(tmpdir)
 
@@ -81,25 +82,26 @@ function PathfinderModel(
     end
 
     PathfinderModel(name, model, 
-        # num_chains, num_threads
-        4, 4, 
-        # seed, refresh, init_bound
-        -1, 100, 2,
+        # Pathfinder default settings
+        # num_chains
+        1,
+        # init_alpha
+        0.001,
+        # tol_obj, tol_rel_obj
+        9.99999999e-13, 1000,
+        # tol_grad, tol_rel_grad
+        1e-08, 10000000,
+        # tol_param
+        1e-8,
+        # history_size, num_psis_draws, num_paths
+        5, 1000, 4,
+        # psis_resample, calculate_lp, save_single_paths
+        true, true, false,
+        #max_lbfgs, num_draws, num_elbo_draws
+        1000, 1000, 25,
 
-        # Pathfinder settings
-        :meanfield,                    # algorithm
-        10000,                         # iter (ADVI)
-        1,                             # grad_samples
-        100,                           # elbo_samples
-        1.0,                           # eta
-
-        # Adaption
-        true,                          # engaged
-        50,                            # adapt_iter
-
-        0.01,                          # tol_rel_obj
-        100,                           # eval_elbo
-        1000,                          # output_samples
+        # init, seed, refresh, sig_figs, num_threads
+        2, 1995513073, 100, -1, 1,
 
         output_base,                   # Path to output files
         tmpdir,                        # Tmpdir settings
@@ -110,33 +112,39 @@ function PathfinderModel(
         String[],                      # Sample .csv files
         String[],                      # Log files
         String[],                      # Diagnostic files
+        String[],                      # Profile files
         cmdstan_home)
 end
 
 function Base.show(io::IO, ::MIME"text/plain", m::PathfinderModel)
-    println(io, "\nPathfinder section:")
+    println(io, "\nModel section:")
     println(io, "  name =                    ", m.name)
     println(io, "  num_chains =              ", m.num_chains)
-    println(io, "  num_threads =             ", m.num_threads)
+
+    println(io, "  init =                    ", m.init)
     println(io, "  seed =                    ", m.seed)
     println(io, "  refresh =                 ", m.refresh)
-    println(io, "  init_bound =              ", m.init_bound)
+    println(io, "  sig_figs =                ", m.sig_figs)
+    println(io, "  num_threads =             ", m.num_threads)
 
-    println(io, "\nAlgorithm section:")
-    println(io, "  algorithm =               ", m.algorithm)
-    println(io, "    iter =                  ", m.iter)
-    println(io, "    grad_samples =          ", m.grad_samples)
-    println(io, "    elbo_samples =          ", m.elbo_samples)
-    println(io, "    eta =                   ", m.eta)
+    println(io, "\nPathfiner section:")
+    println(io, "    init_alpha =            ", m.init_alpha)
+    println(io, "    tol_obj =               ", m.tol_obj)
+    println(io, "    tol_rel_obj =           ", m.tol_rel_obj)
+    println(io, "    tol_grad =              ", m.tol_grad)
+    println(io, "    tol_rel_grad =          ", m.tol_rel_grad)
 
-    println(io, "\nAdapt section:")
-    println(io, "  engaged =                 ", m.engaged)
-    println(io, "  adapt_iter =              ", m.adapt_iter)
+    println(io, "    history_size =          ", m.history_size)
+    println(io, "    num_psis_draws =        ", m.num_psis_draws)
+    println(io, "    num_paths =             ", m.num_paths)
+    println(io, "    psis_resample =         ", m.psis_resample)
+    println(io, "    calculate_lp =          ", m.calculate_lp)
 
-    println(io, "\nCompletion section:")
-    println(io, "  tol_rel_obj =             ", m.tol_rel_obj)
-    println(io, "  eval_elbo =               ", m.eval_elbo)        
-    println(io, "  output_samples =          ", m.output_samples)        
+    println(io, "    save_single_paths =     ", m.save_single_paths)
+    println(io, "    max_lbfgs_iters =       ", m.max_lbfgs_iters)
+    println(io, "    num_draws =             ", m.num_draws)
+    println(io, "    num_elbo_draws =        ", m.num_elbo_draws)
+
 
     println(io, "\nOther:")
     println(io, "  output_base =             ", m.output_base)

@@ -2,7 +2,7 @@
 
 # read_pathfinder
 
-Read pathfinder sample output files created by cmdstan. 
+Read pathfinder output files created by cmdstan. 
 
 ### Method
 ```julia
@@ -30,10 +30,10 @@ function read_pathfinder(m::PathfinderModel)
       index = [idx[k] for k in 1:length(idx)]
       indvec = 1:length(index)
       if i == 1
-        a3d = fill(0.0, m.output_samples, length(indvec), m.num_chains)
+        a3d = fill(0.0, m.num_draws, length(indvec), m.num_chains)
       end
       skipchars(isspace, instream, linecomment='#')
-      for j in 1:m.output_samples
+      for j in 1:m.num_draws
         skipchars(isspace, instream, linecomment='#')
         line = Unicode.normalize(readline(instream), newline2lf=true)
         if eof(instream) && length(line) < 2

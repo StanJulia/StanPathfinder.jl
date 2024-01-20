@@ -1,6 +1,7 @@
 ######### StanPathfinder Bernoulli example  ###########
 
 using StanPathfinder
+using StanIO
 
 bernoulli_model = "
 data { 
@@ -26,6 +27,15 @@ rc = stan_pathfinder(sm; data)
 
 if success(rc)
 
-  (samples, names) = read_pathfinder(sm)
-
+  (a3d, cnames) = read_pathfinder(sm)
+  println()
+  display(cnames)
+  println()
+  display(a3d[1:5, :])
+  println()
+  display(a3d[sm.num_draws-5:end, :])
+  println()
 end
+
+df = read_csvfiles(sm.file, :dataframe)
+display(df)

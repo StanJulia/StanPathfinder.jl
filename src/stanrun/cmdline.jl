@@ -17,33 +17,31 @@ cmdline(m)
 """
 function cmdline(m::PathfinderModel, id)
   
-    #=
-    `/Users/rob/.julia/dev/StanPathfinder/examples/Bernoulli/tmp/bernoulli 
-    pathfinder algorithm=meanfield grad_samples=1 elbo_samples=100 
-    iter=10000 tol_rel_obj=0.01 eval_elbo=100 output_samples=10000 
-    random seed=-1 init=2 id=1 
-    data file=/Users/rob/.julia/dev/StanPathfinder/examples/Bernoulli/tmp/bernoulli_data_1.R 
-    output file=/Users/rob/.julia/dev/StanPathfinder/examples/Bernoulli/tmp/bernoulli_chain_1.csv 
-    refresh=100`
-    =#
-
     cmd = ``
     # Handle the model name field for unix and windows
     cmd = `$(m.exec_path)`
 
     # Pathfinder() specific portion of the model
-    cmd = `$cmd pathfinder algorithm=$(string(m.algorithm))`
+    cmd = `$cmd pathfinder `
 
-    cmd = `$cmd iter=$(m.iter)`
-    cmd = `$cmd grad_samples=$(m.grad_samples) elbo_samples=$(m.elbo_samples)`
-    cmd = `$cmd eta=$(m.eta)`
+    cmd = `$cmd init_alpha=$(m.init_alpha)`
 
-    if m.engaged
-        cmd = `$cmd adapt engaged=1 iter=$(m.adapt_iter)`
-    end
-
+    cmd = `$cmd tol_obj=$(m.tol_obj)`
     cmd = `$cmd tol_rel_obj=$(m.tol_rel_obj)`
-    cmd = `$cmd eval_elbo=$(m.eval_elbo) output_samples=$(m.output_samples)`
+    cmd = `$cmd tol_grad=$(m.tol_grad)`
+    cmd = `$cmd tol_rel_grad=$(m.tol_rel_grad)`
+    cmd = `$cmd tol_param=$(m.tol_param)`
+
+    cmd = `$cmd history_size=$(m.history_size)`
+    cmd = `$cmd num_psis_draws=$(m.num_psis_draws)`
+    cmd = `$cmd num_paths=$(m.num_paths)`
+
+    cmd = `$cmd psis_resample=$(m.psis_resample)`
+    cmd = `$cmd calculate_lp=$(m.calculate_lp)`
+    cmd = `$cmd save_single_paths=$(m.save_single_paths)`
+    cmd = `$cmd max_lbfgs_iters=$(m.max_lbfgs_iters)`
+    cmd = `$cmd num_draws=$(m.num_draws)`
+    cmd = `$cmd num_elbo_draws=$(m.num_elbo_draws)`
 
     cmd = `$cmd id=$(id)`
 
@@ -56,21 +54,29 @@ function cmdline(m::PathfinderModel, id)
     if length(m.init_file) > 0 && isfile(m.init_file[id])
       cmd = `$cmd init=$(m.init_file[id])`
     else
-      cmd = `$cmd init=$(m.init_bound)`
+      cmd = `$cmd init=$(m.init)`
     end
     
     cmd = `$cmd random seed=$(m.seed)`
     
     # Output options
     cmd = `$cmd output`
-    if length(m.sample_file) > 0
-      cmd = `$cmd file=$(m.sample_file[id])`
+    if length(m.file) > 0
+      cmd = `$cmd file=$(m.file[id])`
     end
+
     if length(m.diagnostic_file) > 0
       cmd = `$cmd diagnostic_file=$(m.diagnostic_file)`
     end
+    
+    if length(m.profile_file) > 0
+      cmd = `$cmd profile_file=$(m.profile_file[id])`
+    end
 
     cmd = `$cmd refresh=$(m.refresh)`
+    cmd = `$cmd sig_figs=$(m.sig_figs)`
+
+    cmd = `$cmd num_threads=$(m.num_threads)`
 
     cmd
   

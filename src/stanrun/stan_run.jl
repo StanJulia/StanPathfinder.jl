@@ -6,15 +6,11 @@ Sample from a StanJulia PathfinderModel (<: CmdStanModel.)
 
 ## Required argument
 ```julia
-* `m::PathfinderModel`                # PathfinderModel.
-* `use_json=true`                      # Use JSON3 for data and init files
+* `m::PathfinderModel`                 # PathfinderModel.
+* `use_json=true`                      # Use JSON3 for data files
 ```
 
-### Most frequently used keyword arguments
-```julia
-* `data`                               # Observations Dict or NamedTuple.
-* `init`                               # Init Dict or NT (default: -2 to +2).
-```
+Use `??stan_pathfinder` for a list of additional keyword arguments
 
 ### Returns
 ```julia
@@ -27,31 +23,40 @@ See extended help for other keyword arguments ( `??stan_sample` ).
 
 ### Additional configuration keyword arguments
 ```julia
-* `num_chains=4`                       # Update number of chains.
-* `num_threads=8`                      # Update number of threads.
+* `num_chains=1`                       # Update number of chains.
 
-* `seed=-1`                            # Set seed value.
+* `init=2`                             # Bound for initial values.
+* `seed=1995513073`                    # Set seed value.
 * `refresh=100`                        # Strem to output.
-* `init_bound=2`                       # Bound for initial values.
+* `sig_figs=-1`                        # Number of significant decimals used.
+* `num_threads=1`                      # Number of threads.
 
-* `algorithm=:meanfield`               # :menafield or :fullrank
-* `iter=10000`                         # Maximim no of ADVI iterations
-* `grad_samples=1`                     # Number of draws to compute gradient
-* `elbo_samples=100`                   # Number of draws for ELBO estimate
-* `eta=1.0`                            # Stepsize scaling parameter
+* `init_alpha=0.001`
+* `tol_obj=9.99999999e-13`
+* `tol_rel_obj=1000`
+* `tol_grad=1e-8`
+* `tol_rel_grad=10000000`
+* `tol_param=1e-4`
 
-* `engaged=true`                       # Eta adaptation active
-* `adapt_iter=50`                      # No of iterations for eta adaptation
+* `history_size=5`
+* `num_psis_draws=1000`
+* `num_paths=4`
 
-* `tol_rel_obj=0.01`                   # Tolerance for convergence
-* `eval_elbo=100`                      # No of iterations between ELBO evaluations
-* `output_samples=1000`                # Approximate no of posterior draws to save
+* `psis_resample=true`
+* `calculate_lp=true`
+* `save_single_paths=false`
+
+* `max_lbfgs_iters=1000`
+* `num_draws=1000`
+* `num_elbo_draws=25`
 ```
 """
 function stan_run(m::T, use_json=true; kwargs...) where {T <: CmdStanModels}
 
     handle_keywords!(m, kwargs)
-    
+
+    setup_profiles(m, m.num_chains)
+
     # Diagnostics files requested?
     diagnostics = false
     if :diagnostics in keys(kwargs)
@@ -69,11 +74,6 @@ function stan_run(m::T, use_json=true; kwargs...) where {T <: CmdStanModels}
         :init in keys(kwargs) && update_json_files(m, kwargs[:init],
             m.num_chains, "init")
         :data in keys(kwargs) && update_json_files(m, kwargs[:data],
-            m.num_chains, "data")
-    else
-        :init in keys(kwargs) && update_R_files(m, kwargs[:init],
-            m.num_chains, "init")
-        :data in keys(kwargs) && update_R_files(m, kwargs[:data],
             m.num_chains, "data")
     end
 
@@ -95,7 +95,7 @@ $(SIGNATURES)
 Internal, not exported.
 """
 function stan_cmds(m::T, id::Integer; kwargs...) where {T <: CmdStanModels}
-    append!(m.sample_file, [sample_file_path(m.output_base, id)])
+    append!(m.file, [sample_file_path(m.output_base, id)])
     append!(m.log_file, [log_file_path(m.output_base, id)])
     if length(m.diagnostic_file) > 0
       append!(m.diagnostic_file, [diagnostic_file_path(m.output_base, id)])

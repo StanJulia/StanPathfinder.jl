@@ -1,5 +1,6 @@
 using StanPathfinder
 using Statistics, Test
+using StanIO
 
 if haskey(ENV, "JULIA_CMDSTAN_HOME") || haskey(ENV, "CMDSTAN")
 
@@ -27,18 +28,10 @@ if haskey(ENV, "JULIA_CMDSTAN_HOME") || haskey(ENV, "CMDSTAN")
 
     @testset "Bernoulli pathfinder example" begin
       # Read sample summary (in ChainDataFrame format)
-      samples, cnames = read_pathfinder(stanmodel)
-      ms = mean(samples; dims=1)
-      #ms |> display
-      #ms[1, 2, 1] |> display
-      @test ms[1, 2, 1] ≈ -8.2 atol=0.3
-      @test ms[1, 2, 2] ≈ -8.2 atol=0.3
-      @test ms[1, 2, 3] ≈ -8.2 atol=0.3
-      @test ms[1, 2, 4] ≈ -8.2 atol=0.3
-      @test ms[1, 3, 1] ≈ -0.5 atol=0.1
-      @test ms[1, 3, 2] ≈ -0.5 atol=0.1
-      @test ms[1, 3, 3] ≈ -0.5 atol=0.1
-      @test ms[1, 3, 4] ≈ -0.5 atol=0.1
+      df = read_csvfiles(stanmodel.file, :dataframe)
+      #display(df)
+      @test Array(df[1, :]) ≈ [-0.453721, -7.66981, 0.36811] atol=0.3
+      @test Array(df[1000, :]) ≈ [-1.37904, -8.65223, 0.537505] atol=0.3
     end
 
   end
