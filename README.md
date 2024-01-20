@@ -16,10 +16,6 @@
 
 [project-status-img]: https://img.shields.io/badge/lifecycle-stable-green.svg
 
-## Important note
-
-### Refactoring CmdStan.jl v6. Maybe this is an ok approach.
-
 ## Installation
 
 Once this package is registered, you can install it with
