@@ -1,7 +1,7 @@
 ######### StanPathfinder Bernoulli example  ###########
 
 using StanPathfinder
-using StanIO
+using StanIO: read_csvfiles
 
 bernoulli_model = "
 data { 

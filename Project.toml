@@ -1,5 +1,5 @@
 name = "StanPathfinder"
-uuid = "6ede68ce-8466-5085-8a79-4c4de3d9cf4a"
+uuid = "e8ee4b5e-54b2-4408-8575-c3c89e582a15"
 authors = ["Rob J Goedman <goedman@mac.com>"]
 version = "4.5.0"
 
