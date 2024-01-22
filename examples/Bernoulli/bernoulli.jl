@@ -23,19 +23,10 @@ data = Dict("N" => 10, "y" => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1])
 tmpdir = joinpath(@__DIR__, "tmp")
 
 sm = PathfinderModel("bernoulli", bernoulli_model, tmpdir)
-rc = stan_pathfinder(sm; data)
+rc = stan_pathfinder(sm; data, num_chains=1, num_threads=1, save_cmdstan_config=true)
 
 if success(rc)
-
-  (a3d, cnames) = read_pathfinder(sm)
-  println()
-  display(cnames)
-  println()
-  display(a3d[1:5, :])
-  println()
-  display(a3d[sm.num_draws-5:end, :])
-  println()
+    df = read_csvfiles(sm.file, :dataframe)
+    profile_df = create_pathfinder_profile_df(sm)
+    display(profile_df)
 end
-
-df = read_csvfiles(sm.file, :dataframe)
-display(df)

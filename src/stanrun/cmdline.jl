@@ -1,8 +1,8 @@
 """
 
-# cmdline 
+# cmdline
 
-Recursively parse the model to construct command line. 
+$(SIGNATURES)
 
 ### Method
 ```julia
@@ -11,9 +11,11 @@ cmdline(m)
 
 ### Required arguments
 ```julia
-* `m::PathfinderModel`                : PathfinderModel
+* `m::PathfinderModel`       : PathfinderModel
+* `id::Int`                  : Chain id
 ```
 
+Not exported.
 """
 function cmdline(m::PathfinderModel, id)
   
@@ -73,6 +75,12 @@ function cmdline(m::PathfinderModel, id)
       cmd = `$cmd profile_file=$(m.profile_file[id])`
     end
 
+    if m.save_cmdstan_config
+        cmd = `$cmd save_cmdstan_config=1`
+    else
+        cmd = `$cmd save_cmdstan_config=0`
+    end
+    
     cmd = `$cmd refresh=$(m.refresh)`
     cmd = `$cmd sig_figs=$(m.sig_figs)`
 

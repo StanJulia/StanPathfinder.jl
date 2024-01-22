@@ -1,5 +1,13 @@
 import Base: show
 
+"""
+
+# PathfinderModel 
+
+$(FIELDS)
+
+Exported.
+"""
 mutable struct PathfinderModel <: CmdStanModels
     name::AbstractString;              # Name of the Stan program
     model::AbstractString;             # Stan language model program
@@ -27,6 +35,7 @@ mutable struct PathfinderModel <: CmdStanModels
     refresh::Int;
     sig_figs::Int;
     num_threads::Int;
+    save_cmdstan_config::Bool;
 
     output_base::AbstractString;       # Used for file paths to be created
     tmpdir::AbstractString;            # Holds all created files
@@ -44,7 +53,9 @@ end
 """
 # PathfinderModel 
 
-Create a PathfinderModel and compile the Stan Language Model.. 
+Create a PathfinderModel and compile the Stan Language Model.
+
+$(SIGNATURES)
 
 ### Required arguments
 ```julia
@@ -54,9 +65,10 @@ Create a PathfinderModel and compile the Stan Language Model..
 
 ### Optional positional argument
 ```julia
- `tmpdir::AbstractString`             : Directory where output files are stored
+* `tmpdir::AbstractString`      : Directory where output files are stored
 ```
 
+Exported.
 """
 function PathfinderModel(
     name::AbstractString,
@@ -102,6 +114,8 @@ function PathfinderModel(
 
         # init, seed, refresh, sig_figs, num_threads
         2, 1995513073, 100, -1, 1,
+        # save_cmdstan_config
+        true,
 
         output_base,                   # Path to output files
         tmpdir,                        # Tmpdir settings

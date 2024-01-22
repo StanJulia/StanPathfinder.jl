@@ -30,12 +30,14 @@ include("stanrun/stan_run.jl")
 include("stanrun/cmdline.jl")
 
 include("stansamples/read_pathfinder.jl")
+include("stansamples/create_pathfinder_profile_df.jl")
 
 stan_pathfinder = stan_run
 
 export
   PathfinderModel,
   stan_pathfinder,
-  read_pathfinder
+  read_pathfinder,
+  create_pathfinder_profile_df
 
 end # module

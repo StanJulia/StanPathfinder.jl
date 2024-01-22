@@ -1,6 +1,6 @@
 """
 
-stan_pathfinder()
+$(SIGNATURES)
 
 Sample from a StanJulia PathfinderModel (<: CmdStanModel.)
 
@@ -45,6 +45,7 @@ See extended help for other keyword arguments ( `??stan_sample` ).
 * `psis_resample=true`
 * `calculate_lp=true`
 * `save_single_paths=false`
+* `save_cmdstan_config=true`
 
 * `max_lbfgs_iters=1000`
 * `num_draws=1000`
@@ -78,10 +79,6 @@ function stan_run(m::T, use_json=true; kwargs...) where {T <: CmdStanModels}
     end
 
     m.cmds = [stan_cmds(m, id; kwargs...) for id in 1:m.num_chains]
-
-    #println(typeof(m.cmds))
-    #println()
-    #println(m.cmds)
 
     run(pipeline(par(m.cmds), stdout=m.log_file[1]))
 end

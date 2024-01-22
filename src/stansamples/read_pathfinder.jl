@@ -2,6 +2,8 @@
 
 # read_pathfinder
 
+$(SIGNATURES)
+
 Read pathfinder output files created by cmdstan. 
 
 ### Method
