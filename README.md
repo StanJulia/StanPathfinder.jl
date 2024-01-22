@@ -16,9 +16,15 @@
 
 [project-status-img]: https://img.shields.io/badge/lifecycle-stable-green.svg
 
+## Purpose
+
+StanPathfinder.jl wraps `cmdstan`'s `pathfinder` method. It is documented in Zhang, Lu, Bob Carpenter, Andrew Gelman, and Aki Vehtari (2022): “Pathfinder: Parallel Quasi-Newton Variational Inference.” [Journal of Machine Learning Research 23 (306): 1–49](http://jmlr.org/papers/v23/21-0889.html). See also [Stan's cmdstan manual (chapter 6) for details](https://mc-stan.org/docs/cmdstan-guide/pathfinder-intro.html).
+
+Note: This is the initial implementation. A few changes are to ne expected.
+
 ## Installation
 
-Once this package is registered, you can install it with
+This package is registered, you can install it with
 
 ```julia
 pkg> add StanPathfinder.jl
