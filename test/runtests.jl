@@ -22,9 +22,9 @@ if haskey(ENV, "JULIA_CMDSTAN_HOME") || haskey(ENV, "CMDSTAN")
 
   sm = PathfinderModel("bernoulli", bernoulli_model)
 
-  rc = stan_pathfinder(sm; data=bernoulli_data, num_chains=1)
+  rc = stan_pathfinder(sm; data=bernoulli_data)
 
-  if success(rc)
+  if all(success.(rc))
 
       str = read(joinpath(sm.tmpdir, "$(sm.name)_log_1.log"), String)
       findfirst("Path [1]", str)

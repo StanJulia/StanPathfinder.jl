@@ -52,9 +52,14 @@ See extended help for other keyword arguments ( `??stan_sample` ).
 * `num_elbo_draws=25`
 ```
 """
-function stan_run(m::T, use_json=true; kwargs...) where {T <: CmdStanModels}
+function stan_run(m::PathfinderModel, use_json=true; kwargs...)
 
     handle_keywords!(m, kwargs)
+
+    if m.num_chains > 1 || m.num_threads > 1
+        @info "Currently running StanPathfinder with either \
+         num_chains>1 or num_threads>1 can lead to problematic results."
+     end
 
     setup_profiles(m, m.num_chains)
 
@@ -67,8 +72,8 @@ function stan_run(m::T, use_json=true; kwargs...) where {T <: CmdStanModels}
 
     # Remove existing sample files
     for id in 1:m.num_chains
-        sfile = sample_file_path(m.output_base, id)
-        isfile(sfile) && rm(sfile)
+        append!(m.file, [sample_file_path(m.output_base, id)])
+        isfile(m.file[id]) && rm(m.file[id])
     end
 
     if use_json
@@ -78,9 +83,17 @@ function stan_run(m::T, use_json=true; kwargs...) where {T <: CmdStanModels}
             m.num_chains, "data")
     end
 
-    m.cmds = [stan_cmds(m, id; kwargs...) for id in 1:m.num_chains]
+    cmd_and_paths = [stan_cmd_and_paths(m, id) for id in 1:m.num_chains]
+    for i in 1:m.num_chains
+        append!(m.cmds, [cmd_and_paths[i]])
+    end
 
-    run(pipeline(par(m.cmds), stdout=m.log_file[1]))
+
+    pmap(cmd_and_paths) do cmd_and_path
+        cmd, (sample_path, log_path) = cmd_and_path
+        rm(log_path; force = true)
+        cmd
+    end
 end
 
 """
@@ -91,11 +104,10 @@ $(SIGNATURES)
 
 Internal, not exported.
 """
-function stan_cmds(m::T, id::Integer; kwargs...) where {T <: CmdStanModels}
-    append!(m.file, [sample_file_path(m.output_base, id)])
-    append!(m.log_file, [log_file_path(m.output_base, id)])
-    if length(m.diagnostic_file) > 0
-      append!(m.diagnostic_file, [diagnostic_file_path(m.output_base, id)])
-    end
-    cmdline(m, id; kwargs...)
+function stan_cmd_and_paths(m, id)
+    sample_file=StanBase.sample_file_path(m.output_base, id)
+    log_file=StanBase.log_file_path(m.output_base, id)
+    arguments = StanPathfinder.cmdline(m, id)
+    cmd = foldl((x, y) -> `$x $y`, arguments; init=``)
+    (pipeline(cmd; stdout=log_file, stderr=log_file, append=true), (sample_file, log_file))
 end

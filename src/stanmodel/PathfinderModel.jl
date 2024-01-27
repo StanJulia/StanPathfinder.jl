@@ -42,7 +42,7 @@ mutable struct PathfinderModel <: CmdStanModels
     exec_path::AbstractString;         # Path to the cmdstan excutable
     data_file::Vector{AbstractString}; # Array of data files input to cmdstan
     init_file::Vector{AbstractString}; # Array of init files input to cmdstan
-    cmds::Vector{Cmd};                 # Array of cmds to be spawned/pipelined
+    cmds::Any;                         # Array of cmd_and_paths to be spawned/pipelined
     file::Vector{String};              # Sample file array (.csv)
     log_file::Vector{String};          # Log file array
     diagnostic_file::Vector{String};   # Diagnostic file array
@@ -96,7 +96,7 @@ function PathfinderModel(
     PathfinderModel(name, model, 
         # Pathfinder default settings
         # num_chains
-        4,
+        1,
         # init_alpha
         0.001,
         # tol_obj, tol_rel_obj
@@ -115,14 +115,14 @@ function PathfinderModel(
         # init, seed, refresh, sig_figs, num_threads
         2, 1995513073, 100, -1, 1,
         # save_cmdstan_config
-        true,
+        false,
 
         output_base,                   # Path to output files
         tmpdir,                        # Tmpdir settings
         exec_path,                     # Exec_path
         AbstractString[],              # Data files
         AbstractString[],              # Init files
-        Cmd[],                         # Command lines
+        [],                            # Command lines
         String[],                      # Sample .csv files
         String[],                      # Log files
         String[],                      # Diagnostic files

@@ -23,9 +23,9 @@ data = Dict("N" => 10, "y" => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1])
 tmpdir = joinpath(@__DIR__, "tmp")
 
 sm = PathfinderModel("bernoulli", bernoulli_model, tmpdir)
-rc = stan_pathfinder(sm; data, num_chains=1)
+rc = stan_pathfinder(sm; data, seed=rand(1:200000000, 1)[1], num_chains=2)
 
-if success(rc)
+if all(success.(rc))
 
     str = read(joinpath(sm.tmpdir, "$(sm.name)_log_1.log"), String)
     findfirst("Path [1]", str)

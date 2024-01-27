@@ -10,7 +10,7 @@ using Reexport
 
 using CSV, DelimitedFiles, Unicode
 using NamedTupleTools, Parameters
-using DataFrames
+using DataFrames, Distributed
 
 using DocStringExtensions: FIELDS, SIGNATURES, TYPEDEF
 

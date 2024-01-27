@@ -8,11 +8,6 @@ $(SIGNATURES)
 * `sm::PathfinderModel`    : PathfinderModel object
 ```
 
-### Keyword arguments
-```julia
-* `check_num_threads::true`
-```
-
 Note: Currently this method only supports runs with num_threads=1!
 
 Exported.
