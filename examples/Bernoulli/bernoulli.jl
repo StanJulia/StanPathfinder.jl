@@ -23,10 +23,17 @@ data = Dict("N" => 10, "y" => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1])
 tmpdir = joinpath(@__DIR__, "tmp")
 
 sm = PathfinderModel("bernoulli", bernoulli_model, tmpdir)
-rc = stan_pathfinder(sm; data, num_chains=1, num_threads=1, save_cmdstan_config=true)
+rc = stan_pathfinder(sm; data, num_chains=1)
 
 if success(rc)
-    df = read_csvfiles(sm.file, :dataframe)
+
+    str = read(joinpath(sm.tmpdir, "$(sm.name)_log_1.log"), String)
+    findfirst("Path [1]", str)
+    str = split(str[findfirst("Path [1]", str)[1]:end], "\n")
+    display(str)
+
+    df = read_pathfinder(sm)
     profile_df = create_pathfinder_profile_df(sm)
     display(profile_df)
+
 end

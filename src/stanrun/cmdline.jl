@@ -17,8 +17,8 @@ cmdline(m)
 
 Not exported.
 """
-function cmdline(m::PathfinderModel, id)
-  
+function cmdline(m::PathfinderModel, id; kwargs...)
+
     cmd = ``
     # Handle the model name field for unix and windows
     cmd = `$(m.exec_path)`
@@ -26,24 +26,21 @@ function cmdline(m::PathfinderModel, id)
     # Pathfinder() specific portion of the model
     cmd = `$cmd pathfinder `
 
-    cmd = `$cmd init_alpha=$(m.init_alpha)`
-
-    cmd = `$cmd tol_obj=$(m.tol_obj)`
-    cmd = `$cmd tol_rel_obj=$(m.tol_rel_obj)`
-    cmd = `$cmd tol_grad=$(m.tol_grad)`
-    cmd = `$cmd tol_rel_grad=$(m.tol_rel_grad)`
-    cmd = `$cmd tol_param=$(m.tol_param)`
-
-    cmd = `$cmd history_size=$(m.history_size)`
-    cmd = `$cmd num_psis_draws=$(m.num_psis_draws)`
-    cmd = `$cmd num_paths=$(m.num_paths)`
-
-    cmd = `$cmd psis_resample=$(m.psis_resample)`
-    cmd = `$cmd calculate_lp=$(m.calculate_lp)`
-    cmd = `$cmd save_single_paths=$(m.save_single_paths)`
-    cmd = `$cmd max_lbfgs_iters=$(m.max_lbfgs_iters)`
-    cmd = `$cmd num_draws=$(m.num_draws)`
-    cmd = `$cmd num_elbo_draws=$(m.num_elbo_draws)`
+    cmd = :init_alpha in keys(kwargs) ? `$cmd init_alpha=$(m.init_alpha)` : `$cmd`
+    cmd = :tol_obj in keys(kwargs) ? `$cmd tol_obj=$(m.tol_obj)` : `$cmd`
+    cmd = :tol_rel_obj in keys(kwargs) ? `$cmd tol_rel_obj=$(m.tol_rel_obj)` : `$cmd`
+    cmd = :tol_grad in keys(kwargs) ? `$cmd tol_grad=$(m.tol_grad)` : `$cmd`
+    cmd = :tol_rel_grad in keys(kwargs) ? `$cmd tol_rel_grad=$(m.tol_rel_grad)` : `$cmd`
+    cmd = :tol_param in keys(kwargs) ? `$cmd tol_param=$(m.tol_param)` : `$cmd`
+    cmd = :history_size in keys(kwargs) ? `$cmd history_size=$(m.history_size)` : `$cmd`
+    cmd = :num_psis_draws in keys(kwargs) ? `$cmd num_psis_draws=$(m.num_psis_draws)` : `$cmd`
+    cmd = :num_paths in keys(kwargs) ? `$cmd num_paths=$(m.num_paths)` : `$cmd`
+    cmd = :psis_resample in keys(kwargs) ? `$cmd psis_resample=$(m.psis_resample)` : `$cmd`
+    cmd = :calculate_lp in keys(kwargs) ? `$cmd calculate_lp=$(m.calculate_lp)` : `$cmd`
+    cmd = :save_single_paths in keys(kwargs) ? `$cmd save_single_paths=$(m.save_single_paths)` : `$cmd`
+    cmd = :max_lbfgs_iters in keys(kwargs) ? `$cmd max_lbfgs_iters=$(m.max_lbfgs_iters)` : `$cmd`
+    cmd = :num_draws in keys(kwargs) ? `$cmd num_draws=$(m.num_draws)` : `$cmd`
+    cmd = :num_draws in keys(kwargs) ? `$cmd num_draws=$(m.num_elbo_draws)` : `$cmd`
 
     cmd = `$cmd id=$(id)`
 
@@ -75,16 +72,13 @@ function cmdline(m::PathfinderModel, id)
       cmd = `$cmd profile_file=$(m.profile_file[id])`
     end
 
-    if m.save_cmdstan_config
-        cmd = `$cmd save_cmdstan_config=1`
-    else
-        cmd = `$cmd save_cmdstan_config=0`
-    end
+    cmd = :save_cmdstan_config in keys(kwargs) ? 
+      `$cmd save_cmdstan_config=$(m.save_cmdstan_config)` : `$cmd`
     
-    cmd = `$cmd refresh=$(m.refresh)`
-    cmd = `$cmd sig_figs=$(m.sig_figs)`
+    cmd = :refresh in keys(kwargs) ? `$cmd refresh=$(m.refresh)` : `$cmd`
+    cmd = :sig_figs in keys(kwargs) ? `$cmd sig_figs=$(m.sig_figs)` : `$cmd`
 
-    cmd = `$cmd num_threads=$(m.num_threads)`
+    cmd = :num_threads in keys(kwargs) ? `$cmd num_threads=$(m.num_threads)` : `$cmd`
 
     cmd
   

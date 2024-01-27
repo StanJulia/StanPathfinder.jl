@@ -97,5 +97,5 @@ function stan_cmds(m::T, id::Integer; kwargs...) where {T <: CmdStanModels}
     if length(m.diagnostic_file) > 0
       append!(m.diagnostic_file, [diagnostic_file_path(m.output_base, id)])
     end
-    cmdline(m, id)
+    cmdline(m, id; kwargs...)
 end

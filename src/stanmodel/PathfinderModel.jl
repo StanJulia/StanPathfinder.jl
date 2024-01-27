@@ -96,7 +96,7 @@ function PathfinderModel(
     PathfinderModel(name, model, 
         # Pathfinder default settings
         # num_chains
-        1,
+        4,
         # init_alpha
         0.001,
         # tol_obj, tol_rel_obj

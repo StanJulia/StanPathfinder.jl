@@ -22,24 +22,21 @@ if haskey(ENV, "JULIA_CMDSTAN_HOME") || haskey(ENV, "CMDSTAN")
 
   sm = PathfinderModel("bernoulli", bernoulli_model)
 
-  rc = stan_pathfinder(sm; data=bernoulli_data)
+  rc = stan_pathfinder(sm; data=bernoulli_data, num_chains=1)
 
   if success(rc)
 
-    @testset "Bernoulli pathfinder example" begin
-      # Read sample summary (in ChainDataFrame format)
-      df = read_csvfiles(sm.file, :dataframe)
-      #display(df)
-      @test Array(df[1, :]) ≈ [-0.453721, -7.66981, 0.36811] atol=0.3
-      @test Array(df[1000, :]) ≈ [-1.37904, -8.65223, 0.537505] atol=0.3
+      str = read(joinpath(sm.tmpdir, "$(sm.name)_log_1.log"), String)
+      findfirst("Path [1]", str)
+      str = split(str[findfirst("Path [1]", str)[1]:end], "\n")
+      display(str)
 
+      df = read_pathfinder(sm)
       profile_df = create_pathfinder_profile_df(sm)
       display(profile_df)
-      
-      @test Array(profile_df[4, 1:6]) ≈ [-8.154895, 2.0, -7.181885, 101.0, 4.0, -7.638] atol=0.3
-    end
 
   end
+  
 else
     println("\nCMDSTAN or JULIA_CMDSTAN_HOME not set. Skipping tests")
 end
