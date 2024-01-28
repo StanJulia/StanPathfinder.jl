@@ -19,12 +19,18 @@ read_pathfinder(m::PathfinderModelodel)
 """
 function read_pathfinder(m::PathfinderModel)
 
-  local a3d, index, idx, indvec
+  local a3d, idx, indvec
   
   ftype = "chain"
   
   for i in 1:m.num_chains
-    if isfile("$(m.output_base)_$(ftype)_$(i).csv")
+
+    file = "$(m.output_base)_$(ftype)_$(i).csv"
+    if !(isfile(file))
+      println("Found file $file not found!")
+    end
+    
+    if isfile(file)
       instream = open("$(m.output_base)_$(ftype)_$(i).csv")
       skipchars(isspace, instream, linecomment='#')
       line = Unicode.normalize(readline(instream), newline2lf=true)
@@ -32,6 +38,7 @@ function read_pathfinder(m::PathfinderModel)
       index = [idx[k] for k in 1:length(idx)]
       indvec = 1:length(index)
       if i == 1
+        cnames = convert.(String, idx[indvec])
         a3d = fill(0.0, m.num_draws, length(indvec), m.num_chains)
       end
       skipchars(isspace, instream, linecomment='#')

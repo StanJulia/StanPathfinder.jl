@@ -56,9 +56,8 @@ function stan_run(m::PathfinderModel, use_json=true; kwargs...)
 
     handle_keywords!(m, kwargs)
 
-    if m.num_chains > 1 || m.num_threads > 1
-        @info "Currently running StanPathfinder with either \
-         num_chains>1 or num_threads>1 can lead to problematic results."
+    if m.num_threads > 1
+        @info "Currently running StanPathfinder with num_threads>1 can lead to problematic results."
      end
 
     setup_profiles(m, m.num_chains)

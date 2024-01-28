@@ -22,7 +22,7 @@ data = Dict("N" => 10, "y" => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1])
 # Keep tmpdir across multiple runs to prevent re-compilation
 tmpdir = joinpath(@__DIR__, "tmp")
 
-sm = PathfinderModel("bernoulli", bernoulli_model, tmpdir)
+sm = PathfinderModel("bernoulli", bernoulli_model)
 rc = stan_pathfinder(sm; data, seed=rand(1:200000000, 1)[1], num_chains=2)
 
 if all(success.(rc))
@@ -37,3 +37,6 @@ if all(success.(rc))
     display(profile_df)
 
 end
+
+sm2 = PathfinderModel("bernoulli2", bernoulli_model, tmpdir)
+rc2 = stan_pathfinder(sm2; data, seed=rand(1:200000000, 1)[1], num_chains=2)

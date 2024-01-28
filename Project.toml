@@ -1,7 +1,7 @@
 name = "StanPathfinder"
 uuid = "e8ee4b5e-54b2-4408-8575-c3c89e582a15"
 authors = ["Rob J Goedman <goedman@mac.com>"]
-version = "0.2.0"
+version = "0.3.0"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"

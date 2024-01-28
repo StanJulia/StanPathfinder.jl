@@ -40,7 +40,7 @@ function cmdline(m::PathfinderModel, id)
     cmd = `$cmd save_single_paths=$(m.save_single_paths)`
     cmd = `$cmd max_lbfgs_iters=$(m.max_lbfgs_iters)`
     cmd = `$cmd num_draws=$(m.num_draws)`
-    cmd = `$cmd num_draws=$(m.num_elbo_draws)`
+    cmd = `$cmd num_elbo_draws=$(m.num_elbo_draws)`
 
     cmd = `$cmd id=$(id)`
 
