@@ -23,13 +23,13 @@ See extended help for other keyword arguments ( `??stan_sample` ).
 
 ### Additional configuration keyword arguments
 ```julia
-* `num_chains=1`                       # Update number of chains.
+* `num_chains=4` # Number of chains.
 
-* `init=2`                             # Bound for initial values.
-* `seed=1995513073`                    # Set seed value.
-* `refresh=100`                        # Strem to output.
-* `sig_figs=-1`                        # Number of significant decimals used.
-* `num_threads=1`                      # Number of threads.
+* `init=2` # Bound for initial values.
+* `seed=rand(primes(1, 20000001), num_chains)` # Array of seed values.
+* `refresh=100` # Stream to output.
+* `sig_figs=-1` # Number of significant decimals used.
+* `num_threads=1` # Number of threads.
 
 * `init_alpha=0.001`
 * `tol_obj=9.99999999e-13`
@@ -55,6 +55,22 @@ See extended help for other keyword arguments ( `??stan_sample` ).
 function stan_run(m::PathfinderModel, use_json=true; kwargs...)
 
     handle_keywords!(m, kwargs)
+
+    if :num_chains in keys(kwargs)
+        m.num_chains = kwargs[:num_chains]
+        m.seed = rand(primes(1, 20000001), m.num_chains)
+    end
+    if :seed in keys(kwargs)
+        if typeof(kwargs[:seed]) == Int
+            m.seed = repeat([kwargs[:seed]], m.num_chains)
+        else
+            if length(kwargs[:seed]) == m.num_chains
+                m.seed = kwargs[:seed]
+            else
+                m.seed = rand(primes(1, 20000001), m.num_chains)
+            end
+        end
+    end
 
     if m.num_threads > 1
         @info "Currently running StanPathfinder with num_threads>1 can lead to problematic results."

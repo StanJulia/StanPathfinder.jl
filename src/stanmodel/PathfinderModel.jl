@@ -31,7 +31,7 @@ mutable struct PathfinderModel <: CmdStanModels
     num_elbo_draws::Int;
 
     init::Int;
-    seed::Int;
+    seed::Vector{Int};
     refresh::Int;
     sig_figs::Int;
     num_threads::Int;
@@ -93,10 +93,12 @@ function PathfinderModel(
         throw(StanModelError(model, String(take!(error_output))))
     end
 
+    num_chains = 1
+
     PathfinderModel(name, model, 
         # Pathfinder default settings
         # num_chains
-        1,
+        num_chains,
         # init_alpha
         0.001,
         # tol_obj, tol_rel_obj
@@ -106,16 +108,19 @@ function PathfinderModel(
         # tol_param
         1e-8,
         # history_size, num_psis_draws, num_paths
-        5, 1000, 4,
+        5, 2000, 4,
         # psis_resample, calculate_lp, save_single_paths
         true, true, false,
         #max_lbfgs, num_draws, num_elbo_draws
-        1000, 1000, 25,
-
-        # init, seed, refresh, sig_figs, num_threads
-        2, 1995513073, 100, -1, 1,
+        1000, 2000, 25,
+        # init
+        2,
+        # seeds
+        rand(primes(10000001, 20000001), num_chains), 
+        # refresh, sig_figs, num_threads
+        100, -1, 1,
         # save_cmdstan_config
-        false,
+        true,
 
         output_base,                   # Path to output files
         tmpdir,                        # Tmpdir settings
@@ -140,6 +145,7 @@ function Base.show(io::IO, ::MIME"text/plain", m::PathfinderModel)
     println(io, "  refresh =                 ", m.refresh)
     println(io, "  sig_figs =                ", m.sig_figs)
     println(io, "  num_threads =             ", m.num_threads)
+    println(io, "  save_cmdstan_config =     ", m.save_cmdstan_config)
 
     println(io, "\nPathfiner section:")
     println(io, "    init_alpha =            ", m.init_alpha)
@@ -158,7 +164,6 @@ function Base.show(io::IO, ::MIME"text/plain", m::PathfinderModel)
     println(io, "    max_lbfgs_iters =       ", m.max_lbfgs_iters)
     println(io, "    num_draws =             ", m.num_draws)
     println(io, "    num_elbo_draws =        ", m.num_elbo_draws)
-
 
     println(io, "\nOther:")
     println(io, "  output_base =             ", m.output_base)

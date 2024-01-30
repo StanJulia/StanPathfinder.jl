@@ -56,7 +56,7 @@ function cmdline(m::PathfinderModel, id)
       cmd = `$cmd init=$(m.init)`
     end
     
-    cmd = `$cmd random seed=$(m.seed)`
+    cmd = `$cmd random seed=$(m.seed[id])`
     
     # Output options
     cmd = `$cmd output`

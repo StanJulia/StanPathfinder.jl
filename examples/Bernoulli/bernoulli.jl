@@ -23,7 +23,7 @@ data = Dict("N" => 10, "y" => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1])
 tmpdir = joinpath(@__DIR__, "tmp")
 
 sm = PathfinderModel("bernoulli", bernoulli_model)
-rc = stan_pathfinder(sm; data, seed=rand(1:200000000, 1)[1], num_chains=2)
+rc = stan_pathfinder(sm; data)
 
 if all(success.(rc))
 
@@ -39,4 +39,17 @@ if all(success.(rc))
 end
 
 sm2 = PathfinderModel("bernoulli2", bernoulli_model, tmpdir)
-rc2 = stan_pathfinder(sm2; data, seed=rand(1:200000000, 1)[1], num_chains=2)
+rc2 = stan_pathfinder(sm2; data, seed=rand(1:200000000, 2), num_chains=2)
+
+if all(success.(rc2))
+
+    str = read(joinpath(sm2.tmpdir, "$(sm2.name)_log_1.log"), String)
+    findfirst("Path [1]", str)
+    str = split(str[findfirst("Path [1]", str)[1]:end], "\n")
+    display(str)
+
+    df = read_pathfinder(sm2)
+    profile_df = create_pathfinder_profile_df(sm2)
+    display(profile_df)
+
+end
