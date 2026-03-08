@@ -26,7 +26,7 @@ NamedTupleTools = "0.14"
 Parameters = "0.12"
 Primes = "0.5"
 Reexport = "1.2"
-StanBase = "4.7"
+StanBase = "4"
 StanIO = "1"
 julia = "1"
 
